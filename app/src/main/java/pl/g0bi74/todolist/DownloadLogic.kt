@@ -92,5 +92,55 @@ class MainViewModel : ViewModel() {
             }
     }
 
+    fun deleteTask(task: Task) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        db.collection("tasks")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("title", task.title)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    db.collection("tasks").document(document.id)
+                        .delete()
+                        .addOnSuccessListener {
+                            println("Zadanie usunięte")
+                            loadTasks() // Odświeżenie listy
+                        }
+                        .addOnFailureListener { e ->
+                            println("Błąd usuwania zadania: $e")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Nie znaleziono zadania: $e")
+            }
+    }
+
+    fun updateTask(task: Task) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        db.collection("tasks")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("title", task.title) // Zakładam, że tytuł jest unikalny
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    db.collection("tasks").document(document.id)
+                        .set(task)
+                        .addOnSuccessListener {
+                            println("Zadanie zaktualizowane")
+                            loadTasks()
+                        }
+                        .addOnFailureListener { e ->
+                            println("Błąd aktualizacji zadania: $e")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Nie znaleziono zadania: $e")
+            }
+    }
+
 
 }

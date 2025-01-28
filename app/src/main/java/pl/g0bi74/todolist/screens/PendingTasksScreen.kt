@@ -26,12 +26,10 @@ fun PendingTasksScreen(viewModel: MainViewModel = viewModel(), onBack: () -> Uni
 
         pendingTasks.forEach { task ->
             TaskItem(
-                taskName = task.title,
-                deadline = task.deadline,
-                priority = task.priority,
-                onComplete = {
-                    viewModel.markTaskAsCompleted(task) // Oznaczenie jako ukończone
-                }
+                task = task,
+                onComplete = { viewModel.markTaskAsCompleted(task) },
+                onDelete = { viewModel.deleteTask(task) },
+                onSave = { updatedTask -> viewModel.updateTask(updatedTask) }
             )
         }
 

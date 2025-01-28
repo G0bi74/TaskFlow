@@ -113,14 +113,19 @@ fun MainScreen(
             // Wyświetlanie zadania o najwyższym priorytecie
             pendingTasks.maxByOrNull { it.priority }?.let { highestPriorityTask ->
                 TaskItem(
-                    taskName = highestPriorityTask.title,
-                    deadline = highestPriorityTask.deadline,
-                    priority = highestPriorityTask.priority,
+                    task = highestPriorityTask,
                     onComplete = {
-                        // Funkcja obsługi ukończenia zadania
+                        viewModel.markTaskAsCompleted(highestPriorityTask)
+                    },
+                    onDelete = {
+                        viewModel.deleteTask(highestPriorityTask)
+                    },
+                    onSave = { updatedTask ->
+                        viewModel.updateTask(updatedTask)
                     }
                 )
             } ?: Text("Brak zadań do wykonania", style = MaterialTheme.typography.bodyMedium)
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
