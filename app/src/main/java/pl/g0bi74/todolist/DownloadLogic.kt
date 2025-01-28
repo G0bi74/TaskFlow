@@ -66,7 +66,19 @@ class MainViewModel : ViewModel() {
                 }
             }
     }
+    fun markTaskAsPending(task: Task) {
+        val taskId = task.id ?: return
 
+        db.collection("tasks").document(taskId)
+            .update("completed", false)
+            .addOnSuccessListener {
+                println("Zadanie oznaczone jako niewykonane")
+                loadTasks()
+            }
+            .addOnFailureListener { e ->
+                println("Błąd przy aktualizacji zadania: $e")
+            }
+    }
 
 
     fun markTaskAsCompleted(task: Task) {
