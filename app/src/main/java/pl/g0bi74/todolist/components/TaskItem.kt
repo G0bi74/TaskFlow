@@ -36,7 +36,7 @@ fun TaskItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "TaskName jest Puste: $taskName",
+                    text = taskName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

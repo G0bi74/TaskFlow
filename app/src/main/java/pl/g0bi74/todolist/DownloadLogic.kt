@@ -3,18 +3,24 @@ package pl.g0bi74.todolist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class Task(
-    val taskName: String = "",
+    val title: String = "",
     val deadline: String = "",
+    val description: String = "",
     val priority: Int = 1,
-    val completed: Boolean = false
+    val completed: Boolean = false,
+    val userId: String = ""
 )
+
 
 class MainViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
@@ -28,39 +34,63 @@ class MainViewModel : ViewModel() {
     val completedTasks: StateFlow<List<Task>> get() = _completedTasks
 
     fun loadTasks() {
-        val currentUser = auth.currentUser ?: return
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         db.collection("tasks")
-            .whereEqualTo("userId", currentUser.uid) // Pobieraj tylko zadania zalogowanego użytkownika
-            .get()
-            .addOnSuccessListener { result ->
-                val tasks = result.map { doc ->
-                    Task(
-                        taskName = doc.getString("taskName") ?: "",
-                        deadline = doc.getString("deadline") ?: "",
-                        priority = (doc.getLong("priority") ?: 1).toInt(),
-                        completed = doc.getBoolean("completed") ?: false
-                    )
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    println("Błąd pobierania zadań: ${error.message}")
+                    return@addSnapshotListener
                 }
-                // Podziel zadania na dwie listy
-                _pendingTasks.value = tasks.filter { !it.completed }
-                _completedTasks.value = tasks.filter { it.completed }
-            }
-            .addOnFailureListener { exception ->
-                // Obsługa błędów
-                println("Error loading tasks: ${exception.message}")
-            }
-    }
-    fun markTaskAsCompleted(taskId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val taskRef = FirebaseDatabase.getInstance().getReference("tasks").child(userId ?: "").child(taskId)
 
-        taskRef.child("isCompleted").setValue(true)
-            .addOnSuccessListener {
-                onSuccess()
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val pending = mutableListOf<Task>()
+                    val completed = mutableListOf<Task>()
+
+                    for (doc in snapshot.documents) {
+                        val task = doc.toObject(Task::class.java)
+                        if (task != null) {
+                            if (task.completed) {
+                                completed.add(task)
+                            } else {
+                                pending.add(task)
+                            }
+                        }
+                    }
+
+                    _pendingTasks.value = pending
+                    _completedTasks.value = completed
+                }
             }
     }
+
+
+    fun markTaskAsCompleted(task: Task) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        // Znajdujemy dokument, który chcemy zaktualizować
+        db.collection("tasks")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("title", task.title) // Można tu użyć bardziej unikalnego pola, np. ID dokumentu
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    db.collection("tasks").document(document.id)
+                        .update("completed", true)
+                        .addOnSuccessListener {
+                            println("Zadanie oznaczone jako wykonane")
+                            loadTasks() // Odświeżenie listy zadań
+                        }
+                        .addOnFailureListener { e ->
+                            println("Błąd przy aktualizacji zadania: $e")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Nie znaleziono zadania: $e")
+            }
+    }
+
+
 }

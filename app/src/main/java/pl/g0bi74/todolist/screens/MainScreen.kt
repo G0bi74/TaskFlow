@@ -113,7 +113,7 @@ fun MainScreen(
             // Wyświetlanie zadania o najwyższym priorytecie
             pendingTasks.maxByOrNull { it.priority }?.let { highestPriorityTask ->
                 TaskItem(
-                    taskName = highestPriorityTask.taskName,
+                    taskName = highestPriorityTask.title,
                     deadline = highestPriorityTask.deadline,
                     priority = highestPriorityTask.priority,
                     onComplete = {

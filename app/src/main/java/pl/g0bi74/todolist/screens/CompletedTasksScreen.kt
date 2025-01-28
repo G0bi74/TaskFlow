@@ -26,7 +26,7 @@ fun CompletedTasksScreen(viewModel: MainViewModel = viewModel(), onBack: () -> U
 
         completedTasks.forEach { task ->
             TaskItem(
-                taskName = task.taskName,
+                taskName = task.title,
                 deadline = task.deadline,
                 priority = task.priority,
                 onComplete = null // Zadania ukończone nie mają akcji
