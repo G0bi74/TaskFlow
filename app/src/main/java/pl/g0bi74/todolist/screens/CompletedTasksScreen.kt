@@ -16,6 +16,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun CompletedTasksScreen(viewModel: MainViewModel = viewModel(), onBack: () -> Unit) {
     val completedTasks by viewModel.completedTasks.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadTasks()
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Wykonane zadania", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
