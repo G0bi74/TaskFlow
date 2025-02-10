@@ -2,6 +2,7 @@ package pl.g0bi74.todolist.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,7 +15,10 @@ import pl.g0bi74.todolist.MainViewModel
 import pl.g0bi74.todolist.components.TaskItem
 import java.util.Calendar
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 
 @Composable
 fun MainScreen(
@@ -41,43 +45,16 @@ fun MainScreen(
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Dodaj nowe zadanie", style = MaterialTheme.typography.titleMedium)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Tytuł zadania") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Opis zadania") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Priorytet: $priority")
-        Slider(
-            value = priority.toFloat(),
-            onValueChange = { priority = it.toInt() },
-            valueRange = 1f..5f,
-            steps = 4
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            // Wybór daty za pomocą DatePicker
-            DatePickerExample(onDateSelected = { selectedDate ->
-                deadline = selectedDate
-            })
-            Button(onClick = {
+        TaskFormCard(
+            title = title,
+            description = description,
+            priority = priority,
+            deadline = deadline,
+            onTitleChange = { title = it },
+            onDescriptionChange = { description = it },
+            onPriorityChange = { priority = it },
+            onDeadlineChange = { deadline = it },
+            onSaveTask = {
                 if (title.isNotEmpty() && deadline.isNotEmpty()) {
                     saveTaskToFirebase(
                         db = db,
@@ -93,61 +70,62 @@ fun MainScreen(
                             deadline = ""
                             priority = 1
                         },
-                        onFailure = {
-                            message = "Błąd zapisu: ${it.message}"
-                        }
+                        onFailure = { message = "Błąd zapisu: ${it.message}" }
                     )
                 } else {
                     message = "Wszystkie pola są wymagane!"
                 }
-            }) {
-                Text("Dodaj zadanie")
             }
-        }
+        )
 
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text(text = "ToDo List", style = MaterialTheme.typography.titleLarge)
+    }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
 
+
+            Spacer(modifier = Modifier.height(400.dp))
+
+            Text(text = "Just Do it", style = MaterialTheme.typography.displayLarge, modifier = Modifier.align(Alignment.CenterHorizontally))
+
+            Spacer(modifier = Modifier.height(20.dp))
             // Wyświetlanie zadania o najwyższym priorytecie
             pendingTasks.maxByOrNull { it.priority }?.let { highestPriorityTask ->
                 TaskItem(
                     task = highestPriorityTask,
-                    onComplete = {
-                        viewModel.markTaskAsCompleted(highestPriorityTask)
-                    },
-                    onDelete = {
-                        viewModel.deleteTask(highestPriorityTask)
-                    },
-                    onSave = { updatedTask ->
-                        viewModel.updateTask(updatedTask)
-                    }
+                    onComplete = { viewModel.markTaskAsCompleted(highestPriorityTask) },
+                    onDelete = { viewModel.deleteTask(highestPriorityTask) },
+                    onSave = { updatedTask -> viewModel.updateTask(updatedTask) }
                 )
             } ?: Text("Brak zadań do wykonania", style = MaterialTheme.typography.bodyMedium)
 
+            // Spacer, który wypycha dolny pasek do końca ekranu
+            Spacer(modifier = Modifier.weight(1f))
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Nawigacja do innych ekranów
-            Button(onClick = onNavigateToPending) {
-                Text("Zadania do wykonania (${pendingTasks.size})")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = onNavigateToCompleted) {
-                Text("Wykonane zadania (${completedTasks.size})")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(onClick = onLogout) {
-                Text("Wyloguj")
+            // Dolny pasek sterowania
+            Scaffold(
+                bottomBar = {
+                    BottomControlBar(
+                        pendingCount = pendingTasks.size,
+                        completedCount = completedTasks.size,
+                        onNavigateToPending = onNavigateToPending,
+                        onNavigateToCompleted = onNavigateToCompleted,
+                        onLogout = onLogout
+                    )
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp)
+                ) {}
             }
         }
     }
-}
+
+
 fun saveTaskToFirebase(
     db: FirebaseFirestore,
     userId: String,
@@ -187,22 +165,19 @@ fun DatePickerExample(onDateSelected: (String) -> Unit) {
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    // Zmienna na wybraną datę
     var selectedDate by remember { mutableStateOf("") }
 
-    // Pokazuje DatePickerDialog
     val datePickerDialog = android.app.DatePickerDialog(
         context,
         { _, selectedYear, selectedMonth, selectedDay ->
             selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-            onDateSelected(selectedDate) // Przekazuje datę do wywołania zwrotnego
+            onDateSelected(selectedDate)
         },
         year,
         month,
         day
     )
 
-    // UI przycisku i wyświetlanej daty
     Column {
         Button(onClick = { datePickerDialog.show() }) {
             Text("Wybierz datę")
@@ -213,4 +188,103 @@ fun DatePickerExample(onDateSelected: (String) -> Unit) {
     }
 }
 
+@Composable
+fun BottomControlBar(
+    pendingCount: Int,
+    completedCount: Int,
+    onNavigateToPending: () -> Unit,
+    onNavigateToCompleted: () -> Unit,
+    onLogout: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.primary,
+        tonalElevation = 8.dp,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = onNavigateToCompleted,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("Done ($completedCount)")
+            }
+            Button(
+                onClick = onLogout,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("Wyloguj")
+            }
+            Button(
+                onClick = onNavigateToPending,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("ToDo ($pendingCount)")
+            }
+        }
+    }
+}
 
+@Composable
+fun TaskFormCard(
+    title: String,
+    description: String,
+    priority: Int,
+    deadline: String,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onPriorityChange: (Int) -> Unit,
+    onDeadlineChange: (String) -> Unit,
+    onSaveTask: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(text = "Dodaj nowe zadanie", style = MaterialTheme.typography.titleMedium)
+            TextField(
+                value = title,
+                onValueChange = onTitleChange,
+                label = { Text("Tytuł zadania") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = description,
+                onValueChange = onDescriptionChange,
+                label = { Text("Opis zadania") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Priorytet: $priority")
+                Slider(
+                    value = priority.toFloat(),
+                    onValueChange = { onPriorityChange(it.toInt()) },
+                    valueRange = 1f..5f,
+                    steps = 4
+                )
+            }
+
+            DatePickerExample(onDateSelected = onDeadlineChange)
+            Button(
+                onClick = onSaveTask,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Dodaj zadanie")
+            }
+        }
+    }
+}
