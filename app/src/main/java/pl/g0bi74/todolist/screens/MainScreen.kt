@@ -178,12 +178,21 @@ fun DatePickerExample(onDateSelected: (String) -> Unit) {
         day
     )
 
-    Column {
+    Row {
         Button(onClick = { datePickerDialog.show() }) {
             Text("Wybierz datę")
         }
         if (selectedDate.isNotEmpty()) {
-            Text("Wybrana data: $selectedDate", style = MaterialTheme.typography.bodyMedium)
+            Text("     Wybrana data: $selectedDate", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.align(Alignment.CenterVertically))
+            /*
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Wybrana data: $selectedDate", style = MaterialTheme.typography.bodyMedium)
+            }
+             */
+
         }
     }
 }
