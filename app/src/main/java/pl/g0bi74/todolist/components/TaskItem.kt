@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import pl.g0bi74.todolist.Task
 
+
 @Composable
 fun TaskItem(
     task: Task,
@@ -36,15 +37,19 @@ fun TaskItem(
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF9694FF),
+            contentColor = Color.Black
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(task.title, style = MaterialTheme.typography.titleLarge)
-                Text("Priorytet: ${task.priority}", style = MaterialTheme.typography.bodySmall)
+                Text(task.title, style = MaterialTheme.typography.titleLarge, color = Color(0xFF0B0B36))
+                Text("Priorytet: ${task.priority}", style = MaterialTheme.typography.bodySmall, color = Color(0xFF0B0B36))
             }
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -54,21 +59,21 @@ fun TaskItem(
                 OutlinedTextField(
                     value = editedTitle,
                     onValueChange = { editedTitle = it },
-                    label = { Text("Tytuł") },
+                    label = { Text("Tytuł", color = Color(0xFF0B0B36)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = editedDescription,
                     onValueChange = { editedDescription = it },
-                    label = { Text("Opis") },
+                    label = { Text("Opis", color = Color(0xFF0B0B36)) },
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                 )
 
                 OutlinedTextField(
                     value = editedDeadline,
                     onValueChange = { editedDeadline = it },
-                    label = { Text("Deadline") },
+                    label = { Text("Deadline", color = Color(0xFF0B0B36)) },
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                 )
 
@@ -78,7 +83,9 @@ fun TaskItem(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Button(onClick = onComplete) {
+                    Button(onClick = onComplete,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00712D))
+                    ) {
                         Text("Zakończ")
                     }
 
@@ -86,7 +93,7 @@ fun TaskItem(
 
                     Button(
                         onClick = onDelete,
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF960C05))
                     ) {
                         Text("Usuń")
                     }
@@ -101,7 +108,8 @@ fun TaskItem(
                                 deadline = editedDeadline
                             )
                             onSave(updatedTask)
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF9CB43))
                     ) {
                         Text("Zapisz")
                     }

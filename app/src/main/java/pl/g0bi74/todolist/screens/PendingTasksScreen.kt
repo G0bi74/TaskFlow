@@ -2,6 +2,7 @@ package pl.g0bi74.todolist.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pl.g0bi74.todolist.MainViewModel
 import pl.g0bi74.todolist.components.TaskItem
@@ -29,46 +32,60 @@ fun PendingTasksScreen(viewModel: MainViewModel = viewModel(), onBack: () -> Uni
     LaunchedEffect(Unit) {
         viewModel.loadTasks()
     }
+    Box(
+        modifier = Modifier.fillMaxSize().background(
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color(0xFF211951),
+                    Color(0xFF836FFF)
+                )
+            )
+        )
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Zadania do wykonania", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
 
-        // Grupowanie tasków według deadline
-        val groupedTasks = pendingTasks.groupBy { it.deadline }
-            .toSortedMap { date1, date2 ->
-                val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-                LocalDate.parse(date1, formatter).compareTo(LocalDate.parse(date2, formatter))
+    ) {
+
+
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Text("Zadania do wykonania", style = MaterialTheme.typography.titleLarge, color = Color(0xFFEBEAFF))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Grupowanie tasków według deadline
+            val groupedTasks = pendingTasks.groupBy { it.deadline }
+                .toSortedMap { date1, date2 ->
+                    val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+                    LocalDate.parse(date1, formatter).compareTo(LocalDate.parse(date2, formatter))
+                }
+
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                groupedTasks.forEach { (deadline, tasks) ->
+                    item {
+                        Text("Deadline: $deadline", style = MaterialTheme.typography.titleMedium, color = Color(0xFFEBEAFF))
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    items(tasks.sortedByDescending { it.priority }) { task ->
+                        TaskItem(
+                            task = task,
+                            onComplete = {
+                                viewModel.markTaskAsCompleted(task)
+                            },
+                            onDelete = {
+                                viewModel.deleteTask(task)
+                            },
+                            onSave = { updatedTask ->
+                                viewModel.updateTask(updatedTask)
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
             }
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            groupedTasks.forEach { (deadline, tasks) ->
-                item {
-                    Text("Deadline: $deadline", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                items(tasks.sortedByDescending { it.priority }) { task ->
-                    TaskItem(
-                        task = task,
-                        onComplete = {
-                            viewModel.markTaskAsCompleted(task)
-                        },
-                        onDelete = {
-                            viewModel.deleteTask(task)
-                        },
-                        onSave = { updatedTask ->
-                            viewModel.updateTask(updatedTask)
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onBack, modifier = Modifier.fillMaxWidth(),colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF211951))) {
+                Text("Powrót", color = Color(0xFFEBEAFF))
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Powrót")
         }
     }
 }
