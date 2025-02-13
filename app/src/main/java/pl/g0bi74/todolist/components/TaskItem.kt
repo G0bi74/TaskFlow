@@ -84,18 +84,18 @@ fun TaskItem(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Button(onClick = onComplete,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00712D))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9400FF))
                     ) {
-                        Text("Zakończ")
+                        Text("Zakończ", color = Color(0xFF0B0B36))
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
                         onClick = onDelete,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF960C05))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF27005D))
                     ) {
-                        Text("Usuń")
+                        Text("Usuń", color = Color(0xFFAED2FF))
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -109,9 +109,9 @@ fun TaskItem(
                             )
                             onSave(updatedTask)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF9CB43))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAED2FF))
                     ) {
-                        Text("Zapisz")
+                        Text("Zapisz", color = Color(0xFF0B0B36))
                     }
                 }
             }

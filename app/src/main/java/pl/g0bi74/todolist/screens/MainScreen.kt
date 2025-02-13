@@ -2,6 +2,10 @@ package pl.g0bi74.todolist.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import org.checkerframework.common.subtyping.qual.Bottom
+import androidx.compose.ui.res.painterResource
+import pl.g0bi74.todolist.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -44,6 +49,7 @@ fun MainScreen(
     var deadline by remember { mutableStateOf("") }
     var priority by remember { mutableStateOf(1) }
     var message by remember { mutableStateOf("") }
+
 
     // Pobierz zadania przy pierwszym uruchomieniu
     LaunchedEffect(Unit) {
@@ -107,32 +113,37 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(400.dp))
 
-            Text(
-                text = "Just Do it",
-                style = MaterialTheme.typography.displayLarge,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+//            Text(
+//                text = "Just Do it",
+//                style = MaterialTheme.typography.displayLarge,
+//                modifier = Modifier.align(Alignment.CenterHorizontally)
+//            )
 
-            Spacer(modifier = Modifier.height(20.dp))
-            // Wyświetlanie zadania o najwyższym priorytecie
-            pendingTasks.maxByOrNull { it.priority }?.let { highestPriorityTask ->
-                TaskItem(
-                    task = highestPriorityTask,
-                    onComplete = { viewModel.markTaskAsCompleted(highestPriorityTask) },
-                    onDelete = { viewModel.deleteTask(highestPriorityTask) },
-                    onSave = { updatedTask -> viewModel.updateTask(updatedTask) }
+            //Spacer(modifier = Modifier.height(20.dp))
+            Surface(
+                modifier = Modifier
+                    .padding(100.dp),
+                shape = RoundedCornerShape(33.dp),
+                shadowElevation = 38.dp
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_list),
+                    contentDescription = "logo"
                 )
-            } ?: Text("Brak zadań do wykonania", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            // Wyświetlanie zadania o najwyższym priorytecie
+//            pendingTasks.maxByOrNull { it.priority }?.let { highestPriorityTask ->
+//                TaskItem(
+//                    task = highestPriorityTask,
+//                    onComplete = { viewModel.markTaskAsCompleted(highestPriorityTask) },
+//                    onDelete = { viewModel.deleteTask(highestPriorityTask) },
+//                    onSave = { updatedTask -> viewModel.updateTask(updatedTask) }
+//                )
+//            } ?: Text("Brak zadań do wykonania", style = MaterialTheme.typography.bodyMedium)
 
             //Spacer, który wypycha dolny pasek do końca ekranu
-
-
-            // Dolny pasek sterowania
-//            Scaffold(
-//                bottomBar = {
-//
-//                }
-//            ) {}
+            
 
         }
         Column(modifier = Modifier.padding(16.dp,0.dp), verticalArrangement = Arrangement.Bottom ) {
