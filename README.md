@@ -6,6 +6,17 @@
 
 TaskFlow (dawniej "apka") to aplikacja mobilna na Androida do zarządzania listą zadań (To-Do List) z zaawansowanymi funkcjami organizacji i priorytetyzacji zadań. Aplikacja została zbudowana przy użyciu nowoczesnych technologii Android, w tym Jetpack Compose oraz integracji z Firebase.
 
+## 📸 Zrzuty Ekranu
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/dec4800f-51e4-408e-a394-c68f8e25eb4b" width="200" alt="Ekran logowania"/>
+  <img src="https://github.com/user-attachments/assets/e326e424-094f-46d7-a327-b3086727caef" width="200" alt="Ekran główny - dodawanie zadania"/>
+  <img src="https://github.com/user-attachments/assets/ab2b1efb-aaa1-47b5-9b30-92a987f2ba8a" width="200" alt="Zadania oczekujące"/>
+  <img src="https://github.com/user-attachments/assets/15280675-5b4e-4301-9eeb-309c6f68e04d" width="200" alt="Wykonane zadania"/>
+</div>
+
+*Od lewej: Ekran logowania, Główny ekran z formularzem dodawania zadań, Zadania oczekujące z możliwością edycji, Ekran wykonanych zadań*
+
 ## ✨ Funkcje
 
 - **Zarządzanie zadaniami:** Tworzenie, edytowanie i usuwanie zadań
@@ -145,6 +156,17 @@ G0bi74
 ## 📱 About the Project
 
 TaskFlow (formerly "apka") is an Android mobile application for managing a to-do list with advanced task organization and prioritization features. The application is built using modern Android technologies, including Jetpack Compose and Firebase integration.
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/dec4800f-51e4-408e-a394-c68f8e25eb4b" width="200" alt="Login screen"/>
+  <img src="https://github.com/user-attachments/assets/e326e424-094f-46d7-a327-b3086727caef" width="200" alt="Main screen - adding task"/>
+  <img src="https://github.com/user-attachments/assets/ab2b1efb-aaa1-47b5-9b30-92a987f2ba8a" width="200" alt="Pending tasks"/>
+  <img src="https://github.com/user-attachments/assets/15280675-5b4e-4301-9eeb-309c6f68e04d" width="200" alt="Completed tasks"/>
+</div>
+
+*From left: Login screen, Main screen with task creation form, Pending tasks with edit options, Completed tasks screen*
 
 ## ✨ Features
 
