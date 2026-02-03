@@ -56,8 +56,8 @@ app/src/main/java/pl/g0bi74/todolist/
 
 ## 📋 Wymagania
 
-- Android Studio Hedgehog (2023.1.1) lub nowszy
-- JDK 8 lub nowszy
+- Android Studio (2023.1.1 lub nowszy)
+- JDK 17 lub nowszy
 - Konto Firebase z skonfigurowanym projektem
 - Minimalna wersja Android: 8.0 (API 26)
 
