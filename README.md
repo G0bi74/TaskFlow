@@ -125,22 +125,6 @@ Ten projekt został stworzony jako część procesu nauki i rozwoju umiejętnoś
 - **Material Design:** Implementacja wytycznych Material Design 3
 - **Asynchroniczne programowanie:** Praca z Kotlin Coroutines i Flow
 
-## 🔄 Sugestia Nowej Nazwy Repozytorium
-
-Obecna nazwa "apka" (pol. "aplikacja") jest bardzo ogólna. Sugerowane lepsze nazwy:
-
-1. **TaskFlow** - odzwierciedla płynność zarządzania zadaniami
-2. **FireTask** - podkreśla użycie Firebase
-3. **KotlinToDo** - wskazuje na technologię i cel aplikacji
-4. **ComposeTaskManager** - odzwierciedla użycie Jetpack Compose
-5. **TodoList-Compose-Firebase** - opisowa nazwa technologii
-
-**Rekomendacja:** `TaskFlow` - krótka, profesjonalna i oddająca charakter aplikacji.
-
-## 📝 Licencja
-
-Projekt edukacyjny stworzony do celów nauki i rozwoju umiejętności programowania.
-
 ## 👤 Autor
 
 G0bi74
@@ -225,12 +209,6 @@ This project was created as part of the learning process and skill development. 
 - **Android Development:** Understanding Android app lifecycle and components
 - **Material Design:** Implementation of Material Design 3 guidelines
 - **Asynchronous Programming:** Working with Kotlin Coroutines and Flow
-
-## 🔄 Suggested New Repository Name
-
-The current name "apka" (Polish for "app") is very generic. Suggested better names:
-
-**Recommendation:** `TaskFlow` - short, professional, and reflects the app's purpose.
 
 ## 👤 Author
 
